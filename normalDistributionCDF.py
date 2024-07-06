@@ -14,3 +14,25 @@ plt.plot(xs,[normal_cdf(x,mu=-1) for x in xs], "-.", label="mu=-1,sigma=1")
 plt.legend(loc=4)
 plt.title("Various Normal cdfs")
 plt.show()
+
+def inverse_normal_cdf(p: float,
+                       mu: float = 0,
+                       sigma: float = 1,
+                       tolerance: float = 0.00001) -> float:
+    """Find approximate inverse using binary search"""
+
+    # if not standard, compute standard and rescale
+    if mu != 0 or sigma != 1:
+        return mu + sigma * inverse_normal_cdf(p, tolerance=tolerance)
+    
+    low_z = -10.0
+    hi_z = 10.0
+    while hi_z - low_z > tolerance:
+        mid_z = (low_z + hi_z) / 2
+        mid_p = normal_cdf(mid_z)
+        if mid_p < p:
+            low_z = mid_z
+        else:
+            hi_z = mid_z
+
+    return mid_z
